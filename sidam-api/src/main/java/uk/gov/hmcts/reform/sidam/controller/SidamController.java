@@ -93,19 +93,14 @@ public class SidamController {
             produces = APPLICATION_JSON_UTF8_VALUE,
             path = "/api/v1/users"
     )
-    public ResponseEntity<UserRolesUpdatedResource> getUserByEmail(@RequestParam(required=false) String email, @RequestParam(required=false) String query){
+    public ResponseEntity/*<UserRolesUpdatedResource>*/ getUserByEmail(@RequestParam(required=false) String email, @RequestParam(required=false) String query){
         log.info("Get User by id");
         if(email != null){
-            UserResponse responseBody = UserResponse.builder().active(true).email(email.toLowerCase())
-                    .forename("Prashanth").id(UUID.randomUUID().toString()).surname("Kotla").locked(false).roles(new ArrayList<>()).build();
 
-            List<UserResponse> userResponseData = new ArrayList<>();
-            userResponseData.add(responseBody);
-
-            UserRolesUpdatedResource result = new UserRolesUpdatedResource();
-            //result.setUserResponseData(userResponseData);
-
-            return ResponseEntity.status(HttpStatus.OK).body(result);
+            log.info("Get User by id");
+            UserResponse responseBody = UserResponse.builder().active(true).email(email)
+                    .forename("Prashanth").id(UUID.randomUUID().toString()).surname("Kotla").locked(false).id("6884ec4e-d6d9-4803-8a93-7d88c8acb645").roles(new ArrayList<>()).build();
+            return ResponseEntity.status(HttpStatus.OK).body(responseBody);
         }
 
 
@@ -125,13 +120,11 @@ public class SidamController {
 
             Map<String, UserResponse> userResponseData = new HashMap<>();
 
-//            userResponseData.add(buildUserResponse("Akio","Cox", roles));
-//            userResponseData.add(buildUserResponse("Adil","Oozeerally", roles));
-            userResponseData.put("akio.cox@hmcts.net", buildUserResponse("Akio","Cox", allRoles));
-            userResponseData.put("adil.oozeerally", buildUserResponse("Adil", "Oozeerally", roles));
+            userResponseData.put("8e143a1f-f79c-4281-8540-d8f3067296d6", buildUserResponse("Alistair","ZCox", "akio.cox@hmcts.net", "8e143a1f-f79c-4281-8540-d8f3067296d6", allRoles));
+            userResponseData.put("62cd5bcc-f221-439e-af40-11c007521311", buildUserResponse("Adil", "XMay","adil.oozeerally@hmcts.net", "62cd5bcc-f221-439e-af40-11c007521311", roles));
+            userResponseData.put("6884ec4e-d6d9-4803-8a93-7d88c8acb645", buildUserResponse("Prashanth", "YCameron", "prashanth.kotla@hmcts.net", "6884ec4e-d6d9-4803-8a93-7d88c8acb645", roles));
 
             UserRolesUpdatedResource result = new UserRolesUpdatedResource();
-            //! result.setUserResponseData(userResponseData);
             result.setUserResponseData(userResponseData);
 
             return ResponseEntity.status(HttpStatus.OK).body(result);
@@ -141,9 +134,9 @@ public class SidamController {
 
     }
 
-    private UserResponse buildUserResponse(String firstName, String lastName, List<String> roles) {
-        return UserResponse.builder().active(true).email("akio.cox@hmcts.net")
-                        .forename(firstName).surname(lastName).locked(false).roles(roles).build();
+    private UserResponse buildUserResponse(String firstName, String lastName, String email, String id, List<String> roles) {
+        return UserResponse.builder().active(true).email(email)
+                        .forename(firstName).surname(lastName).id(id).locked(false).roles(roles).build();
     }
 
     @ApiOperation("Get a User by Id")
