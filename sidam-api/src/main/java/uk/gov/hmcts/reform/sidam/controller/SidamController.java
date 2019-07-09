@@ -15,12 +15,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import uk.gov.hmcts.reform.sidam.response.UpdatedUserArrayResource;
 import uk.gov.hmcts.reform.sidam.response.UserResponse;
 import uk.gov.hmcts.reform.sidam.response.UserRolesUpdatedResource;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -93,7 +95,7 @@ public class SidamController {
             produces = APPLICATION_JSON_UTF8_VALUE,
             path = "/api/v1/users"
     )
-    public ResponseEntity/*<UserRolesUpdatedResource>*/ getUserByEmail(@RequestParam(required=false) String email, @RequestParam(required=false) String query){
+    public ResponseEntity getUserByEmail(@RequestParam(required=false) String email, @RequestParam(required=false) String query){
         log.info("Get User by id");
         if(email != null){
 
@@ -110,7 +112,6 @@ public class SidamController {
             List<String> roles = new ArrayList<>();
             List<String> allRoles = new ArrayList<>();
 
-
             roles.add(organisationManager);
 
             allRoles.add(organisationManager);
@@ -118,17 +119,20 @@ public class SidamController {
             allRoles.add(financeManager);
             allRoles.add(caseManager);
 
-            Map<String, UserResponse> userResponseData = new HashMap<>();
+            UserResponse user1 = buildUserResponse("Alistair","ZCox", "akio.cox@hmcts.net", "8e143a1f-f79c-4281-8540-d8f3067296d6", allRoles);
+            UserResponse user2 = buildUserResponse("Adil", "XMay","adil.oozeerally@hmcts.net", "62cd5bcc-f221-439e-af40-11c007521311", roles);
+            UserResponse user3 = buildUserResponse("Prashanth", "YCameron", "prashanth.kotla@hmcts.net", "6884ec4e-d6d9-4803-8a93-7d88c8acb645", roles);
 
-            userResponseData.put("8e143a1f-f79c-4281-8540-d8f3067296d6", buildUserResponse("Alistair","ZCox", "akio.cox@hmcts.net", "8e143a1f-f79c-4281-8540-d8f3067296d6", allRoles));
-            userResponseData.put("62cd5bcc-f221-439e-af40-11c007521311", buildUserResponse("Adil", "XMay","adil.oozeerally@hmcts.net", "62cd5bcc-f221-439e-af40-11c007521311", roles));
-            userResponseData.put("6884ec4e-d6d9-4803-8a93-7d88c8acb645", buildUserResponse("Prashanth", "YCameron", "prashanth.kotla@hmcts.net", "6884ec4e-d6d9-4803-8a93-7d88c8acb645", roles));
+            List<UserResponse> userResponseData = new ArrayList<>();
 
-            UserRolesUpdatedResource result = new UserRolesUpdatedResource();
-            result.setUserResponseData(userResponseData);
+            UpdatedUserArrayResource updatedUserArrayResource = new UpdatedUserArrayResource();
+            userResponseData.add(user1);
+            userResponseData.add(user2);
+            userResponseData.add(user3);
 
-            return ResponseEntity.status(HttpStatus.OK).body(result);
+            Object[] data = {user1,user2,user3};
 
+            return ResponseEntity.status(HttpStatus.OK).body(data);
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 
